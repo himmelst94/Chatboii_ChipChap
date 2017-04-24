@@ -1,9 +1,9 @@
 var fs = require('fs');
-//var options = {
-//		  key: fs.readFileSync('alt1-key.pem'),
-//		  cert: fs.readFileSync('alt1-cert.pem')
-//		};
-//
+var options={
+		key : fs.readFileSync('server.enc.key'),
+		cert : fs.readFileSync('server.crt')
+};
+
 var express = require('express')
 ,   app = express()
 ,	tls = require('tls')
@@ -21,10 +21,6 @@ var cloudant = {
 var nano = require("nano")(cloudant.url),
 db = nano.db.use("user");
 
-var options={
-		key : fs.readFileSync('server.enc.key'),
-		cert : fs.readFileSync('server.crt')
-}
 
 var getPassword;
 var dataPassword;
