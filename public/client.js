@@ -4,7 +4,7 @@ $(document).ready(function(){
 	var tls = require('tls');
 	var fs = require('fs');
 	var conf = require('./config.json');
-	var socket = io.connect();
+	var socket = io.connect({secure: true});
 	var name;
 
 	var options = {
