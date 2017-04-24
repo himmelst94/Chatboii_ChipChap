@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Chatboii</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="style.css" />
+		<script src="socket.io/socket.io.js"></script>
+		<script src="jquery.min.js"></script>
+		<script src="client.js"></script>
+	</head>
+	<body>
+		<header>Chatboii by Chip&Chap</header>
+		
+		<div id="username">
+		<footer>
+			<input id="name" type="text" placeholder="your name" />
+			<input id="password" type="password" placeholder="password" />
+			<input id="send_name" type="submit" class="btn" value="login" />
+			<input id="register" type="submit" class="btn" value="register" />
+		</footer>
+		</div>
+		
+		<div id="content">
+		<footer>
+			<input id="messageTo" type="text" placeholder="Message to..." />
+			<input id="text" type="text" placeholder="your message" />
+			<input id="send_message" type="submit" class="btn" value="send" />
+		</footer>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,12 @@
+{
+	"name": "Chatboii",
+	"description": "A simple chat-programm based on node.js",
+	"author": "Chip&Chap",
+	"dependencies" : {
+		"cfenv": "^1.0.0",
+		"jade": "^1.10.0",
+	    "nano": "^6.1.5",
+		"express": "3.x",
+		"socket.io": "*"
+	}
+}
