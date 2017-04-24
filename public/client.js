@@ -7,6 +7,7 @@ $(document).ready(function(){
 	var socket = io.connect({secure: true});
 	var name;
 
+	
 	var options = {
 	   key  : fs.readFileSync('server.key'),
 	   cert : fs.readFileSync('server.cert')
