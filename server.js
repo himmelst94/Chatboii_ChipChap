@@ -16,7 +16,7 @@ var express = require('express')
 ,	usernames=[];
 
 var cloudant = {
-        url : "https://b927f661-bdfc-47bf-849d-68da02cf7f2d-bluemix:01323be4d0be2388e925965cc448da23eeaf556cb11dbd172bb1d085f7ecc2d0@b927f661-bdfc-47bf-849d-68da02cf7f2d-bluemix.cloudant.com"                  
+        url : "https://b927f661-bdfc-47bf-849d-68da02cf7f2d-bluemix:01323be4d0be2388e925965cc448da23eeaf556cb11dbd172bb1d085f7ecc2d0@b927f661-bdfc-47bf-849d-68da02cf7f2d-bluemix.cloudant.com"
 };
 var nano = require("nano")(cloudant.url),
 db = nano.db.use("user");
@@ -44,7 +44,6 @@ app.get('/', function (req, res) {
 
 // Websocket
 io.sockets.on('connection', function (socket) {
-	console.log('Ferderick wurfer hat ein kleinen Penis und ist gay');
 	console.log('log: in socket');
 	socket.emit('chat', { time: new Date(), name: 'Server', text: 'Welcome! You are now connected to the server.' });
 	// user sends a message
