@@ -44,7 +44,7 @@ app.get('/', function (req, res) {
 
 // Websocket
 io.sockets.on('connection', function (socket) {
-	console.log('test Github');
+	console.log('Ferderick wurfer hat ein kleinen Penis');
 	console.log('log: in socket');
 	socket.emit('chat', { time: new Date(), name: 'Server', text: 'Welcome! You are now connected to the server.' });
 	// user sends a message
