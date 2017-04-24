@@ -34,7 +34,7 @@ var Userloggedin;
 //	   console.log('Started!');
 //	});
 
-server.listen(conf.port);
+//server.listen(conf.port);
 
 app.configure(function(){
 	// return files

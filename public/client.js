@@ -1,50 +1,29 @@
 $(document).ready(function(){
 	// WebSocket
 	
-//	var tls = require('tls');
-//	var fs = require('fs');
-//
-//	var options = {
-//	   key  : fs.readFileSync('private.key'),
-//	   cert : fs.readFileSync('public.cert')
-//	};
-//
-//	var client = tls.connect(8080, options, function () {
-//	   console.log(client.authorized ? 'Authorized' : 'Not authorized');
-//	});
-//
-//	client.on('chat', function (data) {
-//		 window.alert("Test");
-//	   client.end();
-//	});
-//	
-//	var tls = require('tls');
-//	var fs = require('fs');
-//	var conf = require('./config.json');
-//	var options = {
-//			key: fs.readFileSync('alt1-key.pem'),
-//			cert: fs.readFileSync('alt1-cert.pem')
-//	};
-//
-//	var client = tls.connect(conf.port, options, function () {
-//	   console.log(client.authorized ? 'Authorized' : 'Not authorized');
-//	});
-//
-//	client.on('data', function (data) {
-//	   console.log(data.toString());
-//	   client.end();
-//	});
-//	
+	var tls = require('tls');
+	var fs = require('fs');
+	var conf = require('./config.json');
 	var socket = io.connect();
 	var name;
+
+	var options = {
+	   key  : fs.readFileSync('server.enc.key'),
+	   cert : fs.readFileSync('server.cert')
+	};
+
+	var client = tls.connect(conf.port, options, function () {
+	   console.log(client.authorized ? 'Authorized' : 'Not authorized');
+	});
+
 	
 	$('#content').hide();
-	socket.on('disconnection', function(data) {
+	client.on('disconnection', function(data) {
 		console.log('client');
-		socket.emit('chat', { name: 'Server', text: 'User '+data.name+' has left the chatroom.', messageTo:'' });		
+		client.emit('chat', { name: 'Server', text: 'User '+data.name+' has left the chatroom.', messageTo:'' });		
 	});
 	// new message
-	socket.on('pmFrom', function(data){
+	client.on('pmFrom', function(data){
 		var time = new Date(data.time);
 		$('#content').append(
 			$('<li></li>').append(
@@ -64,7 +43,7 @@ $(document).ready(function(){
 		$('body').scrollTop($('body')[0].scrollHeight);
 	});
 	
-	socket.on('pmTo', function(data){
+	client.on('pmTo', function(data){
 		var time = new Date(data.time);
 		$('#content').append(
 			$('<li></li>').append(
@@ -83,7 +62,7 @@ $(document).ready(function(){
 		// scrollable
 		$('body').scrollTop($('body')[0].scrollHeight);
 	});
-		socket.on('chat', function (data) {
+		client.on('chat', function (data) {
 		var time = new Date(data.time);
 		$('#content').append(
 			$('<li></li>').append(
@@ -113,7 +92,7 @@ $(document).ready(function(){
 		}
 		else {
 			// Socket send
-			socket.emit('chat', { name: name, text: text, messageTo:messageTo});
+			client.emit('chat', { name: name, text: text, messageTo:messageTo});
 			// clear input
 			
 			$('#text').val('');
@@ -127,14 +106,14 @@ $(document).ready(function(){
 		name = $('#name').val();
 		password = $('#password').val();
 		
-		socket.emit('new user', {name:name, password:password}, function(data){
+		client.emit('new user', {name:name, password:password}, function(data){
 			console.log(data + "Data in cvlient");
 			console.log(data.callback + "Data.callback in client");
 			if(data==true){
 				console.log("In if in client");
 				$('#username').hide();
 				$('#content').show();  
-				socket.emit('chat', { name: 'Server', text: 'User '+name+' has entered the chatroom.', messageTo:''});
+				client.emit('chat', { name: 'Server', text: 'User '+name+' has entered the chatroom.', messageTo:''});
 			}
 			else{
 				window.alert("Username or Password not valid.");
@@ -148,11 +127,11 @@ $(document).ready(function(){
 		name = $('#name').val();
 		var password = $('#password').val();
 		
-		socket.emit('register', { name: name, password: password},  function(data){
+		client.emit('register', { name: name, password: password},  function(data){
 			if(data==true){
 				$('#username').hide();
 				$('#content').show();  
-				socket.emit('chat', { name: 'Server', text: 'User '+name+' has entered the chatroom.', messageTo:''});	
+				client.emit('chat', { name: 'Server', text: 'User '+name+' has entered the chatroom.', messageTo:''});	
 			}
 			else{
 				window.alert("Username is already taken.");
