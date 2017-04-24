@@ -1,6 +1,6 @@
 var fs = require('fs');
 var options={
-		key : fs.readFileSync('server.enc.key'),
+		key : fs.readFileSync('server.key'),
 		cert : fs.readFileSync('server.crt')
 };
 
