@@ -1,8 +1,8 @@
 var fs = require('fs');
-var options={
-		key : fs.readFileSync('server.key'),
-		cert : fs.readFileSync('server.crt')
-};
+//var options={
+//		key : fs.readFileSync('server.key'),
+//		cert : fs.readFileSync('server.crt')
+//};
 
 var express = require('express')
 ,   app = express()
@@ -10,7 +10,8 @@ var express = require('express')
 ,   conf = require('./config.json')
 ,	https = require('https')
 //,	start = tls.createServer(options, app).listen(conf.port)
-,   server = tls.createServer(options, app).listen(conf.port)
+//,   server = tls.createServer(options, app).listen(conf.port)
+,   server = https.createServer(app)
 ,   io = require('socket.io').listen(server)
 ,	users = {}
 ,	usernames=[];
@@ -21,7 +22,6 @@ var cloudant = {
 var nano = require("nano")(cloudant.url),
 db = nano.db.use("user");
 
-
 var getPassword;
 var dataPassword;
 var Userloggedin;
@@ -30,7 +30,7 @@ var Userloggedin;
 //	   console.log('Started!');
 //	});
 
-//server.listen(conf.port);
+server.listen(conf.port);
 
 app.configure(function(){
 	// return files

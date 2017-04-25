@@ -4,27 +4,26 @@ $(document).ready(function(){
 	var tls = require('tls');
 	var fs = require('fs');
 	var conf = require('./config.json');
-	var socket = io.connect({secure: true});
+	var socket = io.connect();
 	var name;
 
-	
-	var options = {
-	   key  : fs.readFileSync('server.key'),
-	   cert : fs.readFileSync('server.cert')
-	};
-
-	var client = tls.connect(conf.port, options, function () {
-	   console.log(client.authorized ? 'Authorized' : 'Not authorized');
-	});
+//	var options = {
+//	   key  : fs.readFileSync('server.enc.key'),
+//	   cert : fs.readFileSync('server.cert')
+//	};
+//
+//	var client = tls.connect(conf.port, options, function () {
+//	   console.log(client.authorized ? 'Authorized' : 'Not authorized');
+//	});
 
 	
 	$('#content').hide();
-	client.on('disconnection', function(data) {
+	socket.on('disconnection', function(data) {
 		console.log('client');
-		client.emit('chat', { name: 'Server', text: 'User '+data.name+' has left the chatroom.', messageTo:'' });		
+		socket.emit('chat', { name: 'Server', text: 'User '+data.name+' has left the chatroom.', messageTo:'' });		
 	});
 	// new message
-	client.on('pmFrom', function(data){
+	socket.on('pmFrom', function(data){
 		var time = new Date(data.time);
 		$('#content').append(
 			$('<li></li>').append(
@@ -44,7 +43,7 @@ $(document).ready(function(){
 		$('body').scrollTop($('body')[0].scrollHeight);
 	});
 	
-	client.on('pmTo', function(data){
+	socket.on('pmTo', function(data){
 		var time = new Date(data.time);
 		$('#content').append(
 			$('<li></li>').append(
@@ -63,7 +62,7 @@ $(document).ready(function(){
 		// scrollable
 		$('body').scrollTop($('body')[0].scrollHeight);
 	});
-		client.on('chat', function (data) {
+		socket.on('chat', function (data) {
 		var time = new Date(data.time);
 		$('#content').append(
 			$('<li></li>').append(
@@ -93,7 +92,7 @@ $(document).ready(function(){
 		}
 		else {
 			// Socket send
-			client.emit('chat', { name: name, text: text, messageTo:messageTo});
+			socket.emit('chat', { name: name, text: text, messageTo:messageTo});
 			// clear input
 			
 			$('#text').val('');
@@ -107,14 +106,14 @@ $(document).ready(function(){
 		name = $('#name').val();
 		password = $('#password').val();
 		
-		client.emit('new user', {name:name, password:password}, function(data){
+		socket.emit('new user', {name:name, password:password}, function(data){
 			console.log(data + "Data in cvlient");
 			console.log(data.callback + "Data.callback in client");
 			if(data==true){
 				console.log("In if in client");
 				$('#username').hide();
 				$('#content').show();  
-				client.emit('chat', { name: 'Server', text: 'User '+name+' has entered the chatroom.', messageTo:''});
+				socket.emit('chat', { name: 'Server', text: 'User '+name+' has entered the chatroom.', messageTo:''});
 			}
 			else{
 				window.alert("Username or Password not valid.");
@@ -128,11 +127,11 @@ $(document).ready(function(){
 		name = $('#name').val();
 		var password = $('#password').val();
 		
-		client.emit('register', { name: name, password: password},  function(data){
+		socket.emit('register', { name: name, password: password},  function(data){
 			if(data==true){
 				$('#username').hide();
 				$('#content').show();  
-				client.emit('chat', { name: 'Server', text: 'User '+name+' has entered the chatroom.', messageTo:''});	
+				socket.emit('chat', { name: 'Server', text: 'User '+name+' has entered the chatroom.', messageTo:''});	
 			}
 			else{
 				window.alert("Username is already taken.");
