@@ -8,10 +8,10 @@ var express = require('express')
 ,   app = express()
 ,	tls = require('tls')
 ,   conf = require('./config.json')
-,	https = require('https')
+,	http = require('http')
 //,	start = tls.createServer(options, app).listen(conf.port)
 //,   server = tls.createServer(options, app).listen(conf.port)
-,   server = https.createServer(app)
+,   server = http.createServer(app)
 ,   io = require('socket.io').listen(server)
 ,	users = {}
 ,	usernames=[];
@@ -29,8 +29,19 @@ var Userloggedin;
 //https.createServer(options, app).listen(conf.port, function () {
 //	   console.log('Started!');
 //	});
-
 server.listen(conf.port);
+app.enable('trust proxy');
+app.use(function (req, res, next) {
+	console.log("USE Function");
+    if (req.secure) {
+            // request was via https, so do no special handling
+            next();
+    } else {
+            // request was via http, so redirect to https
+            res.redirect('https://' + req.headers.host + req.url);
+    }
+});
+
 
 app.configure(function(){
 	// return files
@@ -38,6 +49,7 @@ app.configure(function(){
 });
 
 app.get('/', function (req, res) {
+	res.setHeader("Content-Security-Policy");
 	res.sendfile(__dirname + '/public/index.html');
 });
 

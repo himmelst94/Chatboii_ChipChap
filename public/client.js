@@ -1,9 +1,9 @@
 $(document).ready(function(){
 	// WebSocket
 	
-	var tls = require('tls');
-	var fs = require('fs');
-	var conf = require('./config.json');
+//	var tls = require('tls');
+//	var fs = require('fs');
+//	var conf = require('./config.json');
 	var socket = io.connect();
 	var name;
 
