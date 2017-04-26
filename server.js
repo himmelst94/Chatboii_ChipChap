@@ -144,8 +144,6 @@ io.sockets.on('connection', function (socket) {
 					users[socket.nickname] = socket;
 					usernames.push(data.name);
 					var user = nano.use('user');
-					console.log(data.name);
-					console.log(data.password);
 					db.insert({ _id: data.name, password: data.password  }, function(err, body) {
 					  if (!err){
 						  console.log(body);
