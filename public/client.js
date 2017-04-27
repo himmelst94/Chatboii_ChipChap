@@ -1,20 +1,10 @@
 $(document).ready(function(){
 	// WebSocket
-	
-//	var tls = require('tls');
-//	var fs = require('fs');
-//	var conf = require('./config.json');
+
 	var socket = io.connect();
 	var name;
 
-//	var options = {
-//	   key  : fs.readFileSync('server.enc.key'),
-//	   cert : fs.readFileSync('server.cert')
-//	};
-//
-//	var client = tls.connect(conf.port, options, function () {
-//	   console.log(client.authorized ? 'Authorized' : 'Not authorized');
-//	});
+
 
 	
 	$('#content').hide();
@@ -121,7 +111,7 @@ $(document).ready(function(){
 		});
 		
 	}
-	
+//	register to the chatroom
 	function register(){
 		// reading input
 		name = $('#name').val();

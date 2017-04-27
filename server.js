@@ -1,34 +1,26 @@
 var fs = require('fs');
-//var options={
-//		key : fs.readFileSync('server.key'),
-//		cert : fs.readFileSync('server.crt')
-//};
 
 var express = require('express')
 ,   app = express()
 ,	tls = require('tls')
 ,   conf = require('./config.json')
 ,	http = require('http')
-//,	start = tls.createServer(options, app).listen(conf.port)
-//,   server = tls.createServer(options, app).listen(conf.port)
 ,   server = http.createServer(app)
 ,   io = require('socket.io').listen(server)
 ,	users = {}
 ,	usernames=[];
-
+//URL to our CLoudant DB
 var cloudant = {
         url : "https://b927f661-bdfc-47bf-849d-68da02cf7f2d-bluemix:01323be4d0be2388e925965cc448da23eeaf556cb11dbd172bb1d085f7ecc2d0@b927f661-bdfc-47bf-849d-68da02cf7f2d-bluemix.cloudant.com"
 };
+//Connection to the db
 var nano = require("nano")(cloudant.url),
 db = nano.db.use("user");
 
 var getPassword;
 var dataPassword;
 var Userloggedin;
-// Webserver
-//https.createServer(options, app).listen(conf.port, function () {
-//	   console.log('Started!');
-//	});
+
 server.listen(conf.port);
 app.enable('trust proxy');
 app.use(function (req, res, next) {
@@ -42,6 +34,14 @@ app.use(function (req, res, next) {
     }
 });
 
+//fixed of some issues of the dynamic test
+var helmet = require('helmet');
+
+//Sets "X-XSS-Protection: 1; mode=block".
+app.use(helmet.xssFilter());
+//var xssFilter = require('x-xss-protection');
+//app.use(xssFilter());
+//app.use(xssFilter({ setOnOldIE: true }));
 
 app.configure(function(){
 	// return files
@@ -84,8 +84,10 @@ io.sockets.on('connection', function (socket) {
 		}
 	});
 	
+	
+//	A user wants to login
 	socket.on('new user', function(data, callback){
-		
+//		check if the username exist in our DB, when the user is not in the DB, a error occurs
 		db.get(data.name, function(err, dataGet) {
 			if (!err){
 			getPassword =dataGet.password;
@@ -118,11 +120,11 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 
-	
+//a User wants to create a new User 	
 	socket.on('register', function(data, callback){
 		var checkUsername=false;
 		var username = data.name;
-		console.log(username + " USERNAME------------------");
+//		check if the username exist in our DB, when the user is not in the DB, a error occurs
 		db.get(username, function(err, dataGet) {
 			if (!err){
 				  callback(false);
@@ -144,6 +146,7 @@ io.sockets.on('connection', function (socket) {
 					users[socket.nickname] = socket;
 					usernames.push(data.name);
 					var user = nano.use('user');
+//					The new user gets inserted in our DB
 					db.insert({ _id: data.name, password: data.password  }, function(err, body) {
 					  if (!err){
 						  console.log(body);
@@ -160,7 +163,7 @@ io.sockets.on('connection', function (socket) {
 		
 //	}
 });
-
+//if a user disconnects from the server
 	socket.on('disconnect', function(data){ 	
 		io.sockets.emit('disconnection', {name: socket.nickname});	
 		console.log('server '+ socket.nickname);
