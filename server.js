@@ -1,4 +1,16 @@
 var fs = require('fs');
+//var CookieParser = require('cookie-parser');
+//var redis = require('redis');
+//var SECRET = 'hellonihao';
+//var COOKIENAME = 'hello';
+//var bodyParser = require('body-parser');
+//var ExpressSession = require('express-session');
+//var connectRedis = require('connect-redis');
+//var RedisStore = connectRedis(ExpressSession);
+//var rClient = redis.createClient();
+//var sessionStore = new RedisStore({client: rClient});
+
+
 
 var express = require('express')
 ,   app = express()
@@ -17,9 +29,27 @@ var cloudant = {
 var nano = require("nano")(cloudant.url),
 db = nano.db.use("user");
 
+var passwordHash = require('password-hash');
+//var cookieParser = CookieParser(SECRET);
+//
+//var session = ExpressSession({
+//	  store: sessionStore,
+//	  secret: SECRET,
+//	  resave: true,
+//	  saveUninitialized: true
+//	});
+//
+//app.use(cookieParser);
+//app.use(express.session({store:sessionStore, key:'jsessionid', secret:'your secret here'}));
+
+//app.use(bodyParser.urlencoded({ extended: false }));
+//app.use(cookieParser);
+//app.use(session)
+
 var getPassword;
 var dataPassword;
 var Userloggedin;
+
 
 server.listen(conf.port);
 app.enable('trust proxy');
@@ -52,7 +82,8 @@ app.get('/', function (req, res) {
 	res.setHeader("Content-Security-Policy");
 	res.sendfile(__dirname + '/public/index.html');
 });
-
+//app.use(cookieParser);
+//app.use(express.session({store:sessionStore, key:'jsessionid', secret:'your secret here'}));
 // Websocket
 io.sockets.on('connection', function (socket) {
 	console.log('log: in socket');
@@ -61,8 +92,8 @@ io.sockets.on('connection', function (socket) {
 	socket.on('chat', function (data) {
 		// distributing the message to other users
 
-		if(data.messageTo ==''){
-			if(data.text == '/list'){
+		if(data.messageTo ===''){
+			if(data.text === '/list'){
 				var onlineUsers='';
 				for(var i=0; i<usernames.length;i++){
 					onlineUsers+=usernames[i];
@@ -92,8 +123,9 @@ io.sockets.on('connection', function (socket) {
 			if (!err){
 			getPassword =dataGet.password;
 			dataPassword = data.password;
-			if(getPassword == dataPassword){
-				if(data.name =='Server' || data.name=='server' || data.name=='Admin' || data.name=='admin' || data.name==''){
+			
+			if(passwordHash.verify(dataPassword, getPassword)===true){
+				if(data.name ==='Server' || data.name==='server' || data.name==='Admin' || data.name==='admin' || data.name===''){
 					Userloggedin=true;
 					callback(false);
 					
@@ -130,10 +162,10 @@ io.sockets.on('connection', function (socket) {
 				  callback(false);
 			  }
 			else{
-				if(data.password==""){
+				if(data.password===""){
 					callback(false);
 				}
-				else if(data.name =='Server' || data.name=='server' || data.name=='Admin' || data.name=='admin' || data.name==''){
+				else if(data.name ==='Server' || data.name==='server' || data.name==='Admin' || data.name==='admin' || data.name===''){
 					callback(false);
 				}
 				else if (data.name in users){
@@ -146,8 +178,9 @@ io.sockets.on('connection', function (socket) {
 					users[socket.nickname] = socket;
 					usernames.push(data.name);
 					var user = nano.use('user');
+					var hashedPassword = passwordHash.generate(data.password);
 //					The new user gets inserted in our DB
-					db.insert({ _id: data.name, password: data.password  }, function(err, body) {
+					db.insert({ _id: data.name, password: hashedPassword  }, function(err, body) {
 					  if (!err){
 						  console.log(body);
 					  }
